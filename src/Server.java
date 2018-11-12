@@ -1,6 +1,6 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -63,9 +63,46 @@ public class Server {
 
     }
 
-    public Server() {
+    public Server(String[] args) {
 
-        this.readFile();
+        System.out.println("Creating server");
+
+        int portNumber = Integer.parseInt(args[0]);
+
+        try (
+
+                ServerSocket serverSocket = new ServerSocket(portNumber);
+                Socket clientSocket = serverSocket.accept();
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+
+        ) {
+
+            System.out.println("Running server");
+
+            out.println("Hello world! Enter peace to exit!");
+
+            boolean done = false;
+
+            while(!done) {
+
+                String line = in.readLine();
+                out.println("Echo from <Your Name Here> Server: " + line);
+
+                if(line.toLowerCase().trim().equals("peace")) {
+
+                    done = true;
+
+                }
+            }
+
+        } catch (IOException e) {
+
+            System.out.println("Error creating server");
+
+            e.printStackTrace();
+
+        }
 
     }
 
@@ -73,7 +110,3 @@ public class Server {
 
 
 }
-
- // Can't even do it ordered, can we?
-
-// Once the server starts, it is passed a
