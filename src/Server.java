@@ -1,73 +1,26 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 public class Server {
 
-    private Map<String, ArrayList<String>> songs = new HashMap<>();
+    Database db = new Database();
+    Logger log = new Logger("server.log");
 
-    private void readFile() {
+    public static void main(String[] args) {
 
-        try (BufferedReader br = new BufferedReader(new FileReader("D:/Dev/IdeaProjects/Networks-Coursework/songs.txt"))) {
-
-            String line;
-            int i = 0;
-
-            while ((line = br.readLine()) != null) {
-
-                if (i >= 6 && i <= 111) {
-
-                    String artist, title;
-
-                    if (!Character.isDigit(line.charAt(line.length() - 1))) {
-
-                        title = line.substring(4).trim();
-                        line = br.readLine();
-
-                        i++;
-
-                    } else {
-
-                        title = line.substring(4, 35).trim();
-
-                    }
-
-                    artist = line.substring(35, line.length() - 4).trim();
-
-                    if (songs.containsKey(artist)) {
-
-                        songs.get(artist).add(title);
-
-                    } else {
-
-                        songs.put(artist, new ArrayList<>(Arrays.asList(title)));
-
-                    }
-
-                }
-
-                i++;
-
-            }
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        }
+        Server server = new Server(args[0]);
 
     }
 
-    public Server(String[] args) {
+    public Server(String portString) {
 
-        System.out.println("Creating server");
+        this.log.log("Server started");
 
-        int portNumber = Integer.parseInt(args[0]);
+        Integer portNumber = Integer.parseInt(portString);
 
         try (
 
@@ -78,16 +31,15 @@ public class Server {
 
         ) {
 
-            System.out.println("Running server");
-
-            out.println("Hello world! Enter peace to exit!");
+            out.print("Enter a artist: ");
 
             boolean done = false;
 
             while(!done) {
 
                 String line = in.readLine();
-                out.println("Echo from <Your Name Here> Server: " + line);
+
+                // How to inform the client that I received the request successfully?
 
                 if(line.toLowerCase().trim().equals("peace")) {
 
@@ -106,7 +58,6 @@ public class Server {
 
     }
 
-
-
-
 }
+
+// https://www.javaworld.com/article/2077322/core-java/core-java-sockets-programming-in-java-a-tutorial.html?page=2
