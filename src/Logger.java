@@ -14,7 +14,7 @@ public class Logger {
 
     public void log(String string) {
 
-        this.sb.append(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
+        this.sb.append(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime()));
         this.sb.append(": ");
         this.sb.append(string);
         this.sb.append("\n");

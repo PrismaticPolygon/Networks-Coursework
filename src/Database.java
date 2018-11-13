@@ -54,7 +54,7 @@ public class Database {
 
         for (String a : this.songs.keySet()) {
 
-            if (calculateLevenshteinDistance(a, artist) < 2) {
+            if (calculateLevenshteinDistance(a, artist) <= 2) {
 
                 return "Did you mean " + a + "?";
 

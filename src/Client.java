@@ -1,4 +1,7 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -10,51 +13,63 @@ public class Client {
 
     public static void main(String[] args) {
 
-        Client client = new Client(args[0]);
+        if (args.length == 2) {
+
+            try {
+
+                Client client = new Client(args[0], Integer.parseInt(args[1]));
+
+            } catch (NumberFormatException e) {
+
+                System.out.println("Invalid port number: " + args[1]);
+
+            }
+
+        } else {
+
+            System.out.println("Invalid arguments");
+
+        }
 
     }
 
-    // Handle the case where: the server is not running / available
-    // The port number is busy (?)
-    // User did not input an artist name
-    // Server response is not received.
-
-    // No kind of error checking.
-
-    // After the client has sent a request, received and processed that response, it should prompt to quit.
-
-
-    public Client(String portString) {
-
-        Integer portNumber = Integer.parseInt(portString);
+    public Client(String hostname, int port) {
 
         try (
 
-            Socket socket = new Socket("127.0.0.1", portNumber);
+            Socket socket = new Socket(hostname, port);
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))
+            BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
         ) {
 
-            String userInput;
+            System.out.println("Connection successful");
 
-            while ((userInput = stdIn.readLine()) != null && !userInput.equals("exit") && !userInput.equals("quit")) {
+            String userInput, response;
+
+            while (true) {
+
+                System.out.print("\nEnter an artist: ");
+
+                userInput = stdIn.readLine();
+
+                if (userInput.equals("quit")) {
+
+                    break;
+
+                }
 
                 long requestStart = System.currentTimeMillis();
 
                 out.println(userInput);
+                response = in.readLine();
 
-                String response = in.readLine();
+                System.out.println("\nResponse: " + response);
 
-                System.out.println("Server says: " + response);
-
-
-
-
-                this.logger.log("Server took "  + (System.currentTimeMillis() - requestStart) +
-                        "ms to respond with " + "'" + response +  "' (" + response.getBytes().length + " bytes) " +
-                        "for the request " + "'" + userInput + "'");
+                this.logger.log("Received response ("  + (System.currentTimeMillis() - requestStart) +
+                        " ms): " + "'" + response +  "' (" + response.getBytes().length + " bytes) " +
+                        "for request " + "'" + userInput + "'");
 
             }
 
@@ -65,16 +80,17 @@ public class Client {
 
         } catch (UnknownHostException e) {
 
-            System.out.println("Don't know about host: 127.0.0.1");
+            System.out.println("Don't know about host: " + hostname);
             System.exit(1);
 
         } catch (IOException e) {
 
-            System.out.println("Couldn't get I/O for connection to 127.0.0.1");
+            System.out.println("Couldn't get I/O for connection to " + hostname);
             System.exit(1);
 
         } finally {
 
+            System.out.println("\nConnection closed"); // Though I don't explicitly check, the try-with-resources statement is guaranteed to close the connection itself.
             this.logger.toFile();
 
         }
@@ -82,5 +98,9 @@ public class Client {
     }
 
 }
+
+// TODO: write logs to text file
+// TODO: multithreading
+// TODO: improve error-handling; test cases
 
 // https://www.javaworld.com/article/2077322/core-java/core-java-sockets-programming-in-java-a-tutorial.html

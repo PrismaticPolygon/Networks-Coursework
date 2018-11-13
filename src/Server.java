@@ -1,9 +1,10 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 
 public class Server {
@@ -13,47 +14,60 @@ public class Server {
 
     public static void main(String[] args) {
 
-        Server server = new Server(args[0]);
+        try {
+
+            Server server = new Server(Integer.parseInt(args[0]));
+
+        } catch (NumberFormatException e) {
+
+            System.out.println("Invalid port number: " + args[0]);
+
+        }
 
     }
 
-    public Server(String portString) {
+    public Server(int port) {
 
-        this.logger.log("Server started on port " + portString);
+        System.out.println("Server started on port " + port + "\n");
+        this.logger.log("Server started on port " + port);
 
-        Integer portNumber = Integer.parseInt(portString);
         long connectionStart = -1;
 
         try (
 
-                ServerSocket serverSocket = new ServerSocket(portNumber);
+                ServerSocket serverSocket = new ServerSocket(port);
                 Socket clientSocket = serverSocket.accept();
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
 
         ) {
 
+            this.logger.log("Client successfully connected");
+
             connectionStart = System.currentTimeMillis();
             String userInput;
 
             while ((userInput = in.readLine()) != null) {
 
-                System.out.println("Client says: " + userInput);
+                System.out.println("Request: " + userInput);
 
-                this.logger.log("Received artist name: " + userInput);
+                this.logger.log("Received request: '" + userInput + "'");
 
-                out.println(db.getSongs(userInput.toLowerCase()));
+                out.println(db.getSongs(userInput));
 
             }
 
         } catch (SocketException e) {
 
             System.out.println("Client reset connection");
+            this.logger.log("Client reset connection");
+
             System.exit(1);
 
         } catch (IOException e) {
 
-            e.printStackTrace();
+            System.out.println("Server error: " + e.toString());
+            this.logger.log("Server error: " + e.toString());
 
         } finally {
 
