@@ -12,12 +12,55 @@ public class Database {
 
     public Database() {
 
-        this.loadData();
+        try (BufferedReader br = new BufferedReader(new FileReader("../songs.txt"))) {
+
+            String line;
+            int i = 0;
+
+            while ((line = br.readLine()) != null) {
+
+                if (i >= 6 && i <= 111) {
+
+                    String artist, title;
+
+                    if (!Character.isDigit(line.charAt(line.length() - 1))) {
+
+                        title = line.substring(4).trim();
+                        line = br.readLine();
+
+                        i++;
+
+                    } else {
+
+                        title = line.substring(4, 35).trim();
+
+                    }
+
+                    artist = line.substring(35, line.length() - 4).trim();
+
+                    if (songs.containsKey(artist)) {
+
+                        songs.get(artist).add(title);
+
+                    } else {
+
+                        songs.put(artist, new ArrayList<>(Arrays.asList(title)));
+
+                    }
+
+                }
+
+                i++;
+
+            }
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+        }
 
     }
-
-    // Ooh, that's a dumb bug: short strings will always return a song.
-    // Only one connection at once, though...
 
     public String getSongs(String artist) {
 
@@ -69,58 +112,6 @@ public class Database {
 
     }
 
-    private void loadData() {
-
-        try (BufferedReader br = new BufferedReader(new FileReader("D:/Dev/IdeaProjects/Networks-Coursework/songs.txt"))) {
-
-            String line;
-            int i = 0;
-
-            while ((line = br.readLine()) != null) {
-
-                if (i >= 6 && i <= 111) {
-
-                    String artist, title;
-
-                    if (!Character.isDigit(line.charAt(line.length() - 1))) {
-
-                        title = line.substring(4).trim();
-                        line = br.readLine();
-
-                        i++;
-
-                    } else {
-
-                        title = line.substring(4, 35).trim();
-
-                    }
-
-                    artist = line.substring(35, line.length() - 4).trim();
-
-                    if (songs.containsKey(artist)) {
-
-                        songs.get(artist).add(title);
-
-                    } else {
-
-                        songs.put(artist, new ArrayList<>(Arrays.asList(title)));
-
-                    }
-
-                }
-
-                i++;
-
-            }
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        }
-
-    }
-
     private int calculateLevenshteinDistance(String x, String y) {
 
         int[][] dp = new int[x.length() + 1][y.length() + 1];
@@ -152,8 +143,10 @@ public class Database {
     }
 
     private int min(int... numbers) {
+
         return Arrays.stream(numbers)
                 .min().orElse(Integer.MAX_VALUE);
+
     }
 
 }

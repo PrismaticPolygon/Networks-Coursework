@@ -14,13 +14,21 @@ public class Server {
 
     public static void main(String[] args) {
 
-        try {
+        if (args.length >= 1) {
 
-            Server server = new Server(Integer.parseInt(args[0]));
+            try {
 
-        } catch (NumberFormatException e) {
+                Server server = new Server(Integer.parseInt(args[0]));
 
-            System.out.println("Invalid port number: " + args[0]);
+            } catch (NumberFormatException e) {
+
+                System.out.println("Invalid port number: " + args[0]);
+
+            }
+
+        } else {
+
+            System.out.println("Too few arguments");
 
         }
 

@@ -13,7 +13,7 @@ public class Client {
 
     public static void main(String[] args) {
 
-        if (args.length == 2) {
+        if (args.length >= 2) {
 
             try {
 
@@ -27,7 +27,7 @@ public class Client {
 
         } else {
 
-            System.out.println("Invalid arguments");
+            System.out.println("Too few arguments");
 
         }
 
