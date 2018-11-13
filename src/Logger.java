@@ -1,9 +1,13 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class Logger {
 
-    private StringBuilder sb = new StringBuilder();
+    private ArrayList<String> logs = new ArrayList<>();
     private String filename;
 
     public Logger(String filename) {
@@ -14,17 +18,27 @@ public class Logger {
 
     public void log(String string) {
 
-        this.sb.append(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime()));
-        this.sb.append(": ");
-        this.sb.append(string);
-        this.sb.append("\n");
+        String datetime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
+
+        this.logs.add(datetime + ": " + string + "\n");
 
     }
 
     public void toFile() {
 
-        System.out.println(this.filename);
-        System.out.println(this.sb.toString());
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("../logs/" + this.filename))) {
+
+            for (String s : this.logs) {
+
+                writer.write(s);
+
+            }
+
+        } catch (IOException e) {
+
+            System.err.println("Error writing logs: " + e.toString());
+
+        }
 
     }
 
@@ -32,8 +46,7 @@ public class Logger {
 
         long connectionEnd = System.currentTimeMillis();
 
-        this.sb.append("\n");
-        this.sb.append("Connection duration: " + (connectionEnd - connectionStart) + "ms");
+        this.logs.add("\nConnection duration: " + (connectionEnd - connectionStart) + "ms");
 
     }
 
