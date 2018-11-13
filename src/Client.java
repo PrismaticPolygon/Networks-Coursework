@@ -65,7 +65,7 @@ public class Client {
                 out.println(userInput);
                 response = in.readLine();
 
-                System.out.println("\nResponse: " + response);
+                System.out.println("Response: " + response);
 
                 this.logger.log("Received response ("  + (System.currentTimeMillis() - requestStart) +
                         " ms): " + "'" + response +  "' (" + response.getBytes().length + " bytes) " +
@@ -99,7 +99,6 @@ public class Client {
 
 }
 
-// TODO: write logs to text file
 // TODO: multithreading
 // TODO: improve error-handling; test cases
 

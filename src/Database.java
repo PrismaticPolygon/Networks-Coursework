@@ -16,6 +16,9 @@ public class Database {
 
     }
 
+    // Ooh, that's a dumb bug: short strings will always return a song.
+    // Only one connection at once, though...
+
     public String getSongs(String artist) {
 
         for (String a : this.songs.keySet()) {

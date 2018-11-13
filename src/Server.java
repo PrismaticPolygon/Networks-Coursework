@@ -11,6 +11,7 @@ public class Server {
 
     private Database db = new Database();
     private Logger logger = new Logger("server.log");
+    private int workerCount = 0;
 
     public static void main(String[] args) {
 
@@ -28,56 +29,99 @@ public class Server {
 
     public Server(int port) {
 
+        long serverStart = System.currentTimeMillis();
+
         System.out.println("Server started on port " + port + "\n");
         this.logger.log("Server started on port " + port);
 
-        long connectionStart = -1;
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
 
-        try (
+            Socket clientSocket;
 
-                ServerSocket serverSocket = new ServerSocket(port);
-                Socket clientSocket = serverSocket.accept();
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+            while ((clientSocket = serverSocket.accept()) != null) {
 
-        ) {
+                Thread thread = new Thread(new ClientWorker(clientSocket));
+                thread.start();
 
-            this.logger.log("Client successfully connected");
-
-            connectionStart = System.currentTimeMillis();
-            String userInput;
-
-            while ((userInput = in.readLine()) != null) {
-
-                System.out.println("Request: " + userInput);
-
-                this.logger.log("Received request: '" + userInput + "'");
-
-                out.println(db.getSongs(userInput));
+                this.workerCount++;
 
             }
-
-        } catch (SocketException e) {
-
-            System.out.println("Client reset connection");
-            this.logger.log("Client reset connection");
-
-            System.exit(1);
 
         } catch (IOException e) {
 
-            System.out.println("Server error: " + e.toString());
-            this.logger.log("Server error: " + e.toString());
+            System.err.println("Error starting server on port " + port + ": " + e.toString());
+            this.logger.log("Error starting server on port " + port + ": " + e.toString());
 
         } finally {
 
-            if (connectionStart != -1) {
+            System.out.println("Server shut down (uptime: " + (System.currentTimeMillis() - serverStart) + " ms)");
+            this.logger.log("Server shut down (uptime: " + (System.currentTimeMillis() - serverStart) + " ms)");
+            this.logger.toFile();
 
-                this.logger.logConnectionTime(connectionStart);
+        }
+
+    }
+
+    public class ClientWorker implements Runnable {
+
+        private Socket client;
+        private int workerNo;
+
+        ClientWorker(Socket client) {
+
+            this.client = client;
+            this.workerNo = workerCount;
+
+        }
+
+        public void run() {
+
+            long connectionStart = -1;
+
+            try (
+
+                    PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()))
+
+            ) {
+
+                logger.log("Client " + workerNo + "successfully connected");
+
+                connectionStart = System.currentTimeMillis();
+                String userInput;
+
+                while ((userInput = in.readLine()) != null) {
+
+                    System.out.println("Request (client " + workerNo + "): " + userInput);
+
+                    logger.log("Received request (client " + workerNo + "): '" + userInput + "'");
+
+                    out.println(db.getSongs(userInput));
+
+                }
+
+            } catch (SocketException e) {
+
+                System.out.println("Client " + workerNo + " reset connection");
+                logger.log("Client " + workerNo + " reset connection");
+
+                System.exit(1);
+
+            } catch (IOException e) {
+
+                System.out.println("Server error: " + e.toString());
+                logger.log("Server error: " + e.toString());
+
+            } finally {
+
+                if (connectionStart != -1) {
+
+                    logger.log("Client " + workerNo + " closed connection (duration: " +
+                            (System.currentTimeMillis() - connectionStart) + " ms)");
+
+                }
 
             }
-
-            logger.toFile();
 
         }
 
