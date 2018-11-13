@@ -75,17 +75,17 @@ public class Client {
 
         } catch (ConnectException e) {
 
-            System.out.println("Connection refused");
+            System.out.println("\nConnection to " + hostname + "refused");
             System.exit(1);
 
         } catch (UnknownHostException e) {
 
-            System.out.println("Don't know about host: " + hostname);
+            System.out.println("\nDon't know about host: " + hostname);
             System.exit(1);
 
         } catch (IOException e) {
 
-            System.out.println("Couldn't get I/O for connection to " + hostname);
+            System.out.println("\nCouldn't get I/O for connection to " + hostname);
             System.exit(1);
 
         } finally {
