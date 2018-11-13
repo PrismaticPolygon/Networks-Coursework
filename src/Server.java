@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -31,26 +32,23 @@ public class Server {
 
         ) {
 
-            out.print("Enter a artist: ");
+            System.out.println("Connection successful");
+            String userInput;
 
-            boolean done = false;
+            while ((userInput = in.readLine()) != null) {
 
-            while(!done) {
+                System.out.println("Client says: " + userInput);
 
-                String line = in.readLine();
+                out.println(db.getSongs(userInput));
 
-                // How to inform the client that I received the request successfully?
-
-                if(line.toLowerCase().trim().equals("peace")) {
-
-                    done = true;
-
-                }
             }
 
-        } catch (IOException e) {
+        } catch (SocketException e) {
 
-            System.out.println("Error creating server");
+            System.out.println("Client reset connection");
+            System.exit(1);
+
+        } catch (IOException e) {
 
             e.printStackTrace();
 

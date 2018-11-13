@@ -1,6 +1,5 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -13,6 +12,13 @@ public class Client {
 
     }
 
+    // Handle the case where: the server is not running / available
+    // The port number is busy (?)
+    // User did not input an artist name
+    // Server response is not received.
+
+    // No kind of error checking.
+
     public Client(String portString) {
 
         Integer portNumber = Integer.parseInt(portString);
@@ -20,48 +26,69 @@ public class Client {
         try (
 
             Socket socket = new Socket("127.0.0.1", portNumber);
-            DataOutputStream os = new DataOutputStream(socket.getOutputStream());
-            DataInputStream is = new DataInputStream(socket.getInputStream())
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))
 
         ) {
 
-            try {
+            String userInput;
 
-                os.writeBytes("HELLO\n");
+            while ((userInput = stdIn.readLine()) != null && !userInput.equals("exit")) {
 
-                String responseLine;
+                out.println(userInput);
 
-                while ((responseLine = is.readLine()) != null) {
+                // Gets held up here, I guess. Loop presumably passes by before response?
+                // No, Java is synchronous.
 
-                    System.out.println("Server: " + responseLine);
+                String response = in.readLine();
 
-                    if (responseLine.contains("Ok")) {
-
-                        break;
-
-                    }
-
-                }
-
-            } catch (UnknownHostException e) {
-
-                System.err.println("Trying to connect to an unknown host: " + e);
-
-            } catch (IOException e) {
-
-                System.err.println("IOException : " + e);
-
+                System.out.println("Server says: " + response);
 
             }
 
 
+//            try {
+//
+//                out.write("Debby Boone");
+//
+//                while (true) {
+//
+//                    String responseLine = in.readLine();
+//
+//                    if (responseLine != null) {
+//
+//                        System.out.println("Server says: " + responseLine);
+//                    }
+//
+//                }
+//
+//            } catch (UnknownHostException e) {
+//
+//                System.err.println("Trying to connect to an unknown host: " + e);
+//
+//            } catch (IOException e) {
+//
+//                System.err.println("IOException : " + e);
+//
+//
+//            }
+
+
+        } catch (ConnectException e) {
+
+            System.out.println("Connection refused");
+            System.exit(1);
+
         } catch (UnknownHostException e) {
 
-            System.out.println("Don't know about host: hostname");
+            System.out.println("Don't know about host: 127.0.0.1");
+            System.exit(1);
 
         } catch (IOException e) {
 
-            e.printStackTrace();
+            System.out.println("Couldn't get I/O for connection to 127.0.0.1");
+            System.exit(1);
 
         }
 
