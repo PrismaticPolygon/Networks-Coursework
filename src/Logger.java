@@ -14,7 +14,8 @@ public class Logger {
 
     public void log(String string) {
 
-        this.sb.append(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
+        this.sb.append(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
+        this.sb.append(": ");
         this.sb.append(string);
         this.sb.append("\n");
 
@@ -24,6 +25,15 @@ public class Logger {
 
         System.out.println(this.filename);
         System.out.println(this.sb.toString());
+
+    }
+
+    public void logConnectionTime(long connectionStart) {
+
+        long connectionEnd = System.currentTimeMillis();
+
+        this.sb.append("\n");
+        this.sb.append("Connection duration: " + (connectionEnd - connectionStart) + "ms");
 
     }
 

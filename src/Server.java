@@ -8,8 +8,8 @@ import java.util.*;
 
 public class Server {
 
-    Database db = new Database();
-    Logger log = new Logger("server.log");
+    private Database db = new Database();
+    private Logger logger = new Logger("server.log");
 
     public static void main(String[] args) {
 
@@ -19,9 +19,10 @@ public class Server {
 
     public Server(String portString) {
 
-        this.log.log("Server started");
+        this.logger.log("Server started on port " + portString);
 
         Integer portNumber = Integer.parseInt(portString);
+        long connectionStart = -1;
 
         try (
 
@@ -32,14 +33,16 @@ public class Server {
 
         ) {
 
-            System.out.println("Connection successful");
+            connectionStart = System.currentTimeMillis();
             String userInput;
 
             while ((userInput = in.readLine()) != null) {
 
                 System.out.println("Client says: " + userInput);
 
-                out.println(db.getSongs(userInput));
+                this.logger.log("Received artist name: " + userInput);
+
+                out.println(db.getSongs(userInput.toLowerCase()));
 
             }
 
@@ -51,6 +54,16 @@ public class Server {
         } catch (IOException e) {
 
             e.printStackTrace();
+
+        } finally {
+
+            if (connectionStart != -1) {
+
+                this.logger.logConnectionTime(connectionStart);
+
+            }
+
+            logger.toFile();
 
         }
 

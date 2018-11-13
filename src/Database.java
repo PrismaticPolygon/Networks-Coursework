@@ -92,7 +92,7 @@ public class Database {
 
                     }
 
-                    artist = line.substring(35, line.length() - 4).trim();
+                    artist = line.substring(35, line.length() - 4).trim().toLowerCase();
 
                     if (songs.containsKey(artist)) {
 
