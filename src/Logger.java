@@ -42,12 +42,4 @@ public class Logger {
 
     }
 
-    public void logConnectionTime(long connectionStart) {
-
-        long connectionEnd = System.currentTimeMillis();
-
-        this.logs.add("\nConnection duration: " + (connectionEnd - connectionStart) + " ms");
-
-    }
-
 }

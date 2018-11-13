@@ -99,7 +99,6 @@ public class Client {
 
 }
 
-// TODO: multithreading
 // TODO: improve error-handling; test cases
 
 // https://www.javaworld.com/article/2077322/core-java/core-java-sockets-programming-in-java-a-tutorial.html

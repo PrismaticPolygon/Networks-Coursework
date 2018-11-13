@@ -23,7 +23,7 @@ public class Database {
 
         for (String a : this.songs.keySet()) {
 
-            if (a.contains(artist)) {
+            if (a.equals(artist)) {
 
                 ArrayList<String> songs = this.songs.get(a);
 
