@@ -62,7 +62,7 @@ public class Database {
 
         }
 
-        return artist + " not found";
+        return "'" + artist + "'" + " not found";
 
     }
 
@@ -92,7 +92,7 @@ public class Database {
 
                     }
 
-                    artist = line.substring(35, line.length() - 4).trim().toLowerCase();
+                    artist = line.substring(35, line.length() - 4).trim();
 
                     if (songs.containsKey(artist)) {
 

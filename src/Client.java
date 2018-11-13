@@ -6,6 +6,8 @@ import java.net.UnknownHostException;
 
 public class Client {
 
+    private Logger logger = new Logger("client.log");
+
     public static void main(String[] args) {
 
         Client client = new Client(args[0]);
@@ -18,6 +20,9 @@ public class Client {
     // Server response is not received.
 
     // No kind of error checking.
+
+    // After the client has sent a request, received and processed that response, it should prompt to quit.
+
 
     public Client(String portString) {
 
@@ -34,46 +39,24 @@ public class Client {
 
             String userInput;
 
-            while ((userInput = stdIn.readLine()) != null && !userInput.equals("exit")) {
+            while ((userInput = stdIn.readLine()) != null && !userInput.equals("exit") && !userInput.equals("quit")) {
+
+                long requestStart = System.currentTimeMillis();
 
                 out.println(userInput);
-
-                // Gets held up here, I guess. Loop presumably passes by before response?
-                // No, Java is synchronous.
 
                 String response = in.readLine();
 
                 System.out.println("Server says: " + response);
 
+
+
+
+                this.logger.log("Server took "  + (System.currentTimeMillis() - requestStart) +
+                        "ms to respond with " + "'" + response +  "' (" + response.getBytes().length + " bytes) " +
+                        "for the request " + "'" + userInput + "'");
+
             }
-
-
-//            try {
-//
-//                out.write("Debby Boone");
-//
-//                while (true) {
-//
-//                    String responseLine = in.readLine();
-//
-//                    if (responseLine != null) {
-//
-//                        System.out.println("Server says: " + responseLine);
-//                    }
-//
-//                }
-//
-//            } catch (UnknownHostException e) {
-//
-//                System.err.println("Trying to connect to an unknown host: " + e);
-//
-//            } catch (IOException e) {
-//
-//                System.err.println("IOException : " + e);
-//
-//
-//            }
-
 
         } catch (ConnectException e) {
 
@@ -89,6 +72,10 @@ public class Client {
 
             System.out.println("Couldn't get I/O for connection to 127.0.0.1");
             System.exit(1);
+
+        } finally {
+
+            this.logger.toFile();
 
         }
 
