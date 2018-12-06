@@ -1,4 +1,5 @@
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -26,7 +27,17 @@ public class Logger {
 
     public void toFile() {
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("../logs/" + this.filename))) {
+        String directoryName = "./logs";
+
+        File directory = new File(directoryName);
+
+        if (! directory.exists()) {
+
+            directory.mkdir();
+
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(directoryName + "/" + filename))) {
 
             for (String s : this.logs) {
 

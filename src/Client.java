@@ -6,7 +6,6 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-
 public class Client {
 
     private Logger logger = new Logger("client.log");
@@ -21,19 +20,21 @@ public class Client {
 
             } catch (NumberFormatException e) {
 
-                System.out.println("Invalid port number: " + args[1]);
+                Client client = new Client("127.0.0.1", 4444);
 
             }
 
         } else {
 
-            System.out.println("Too few arguments");
+            Client client = new Client("127.0.0.1", 4444);
 
         }
 
     }
 
     public Client(String hostname, int port) {
+
+        System.out.println("Launching client...");
 
         try (
 
@@ -75,7 +76,7 @@ public class Client {
 
         } catch (ConnectException e) {
 
-            System.out.println("\nConnection to " + hostname + "refused");
+            System.out.println("\nConnection to " + hostname + " refused");
             System.exit(1);
 
         } catch (UnknownHostException e) {

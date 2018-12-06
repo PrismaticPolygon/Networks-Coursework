@@ -6,7 +6,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
-
 public class Server {
 
     private Database db = new Database();
@@ -22,13 +21,13 @@ public class Server {
 
             } catch (NumberFormatException e) {
 
-                System.out.println("Invalid port number: " + args[0]);
+               Server server = new Server(4444);
 
             }
 
         } else {
 
-            System.out.println("Too few arguments");
+            Server server = new Server(4444);
 
         }
 

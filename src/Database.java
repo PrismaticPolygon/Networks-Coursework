@@ -12,7 +12,7 @@ public class Database {
 
     public Database() {
 
-        try (BufferedReader br = new BufferedReader(new FileReader("../songs.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("./songs.txt"))) {
 
             String line;
             int i = 0;
@@ -112,6 +112,7 @@ public class Database {
 
     }
 
+    // https://www.baeldung.com/java-levenshtein-distance
     private int calculateLevenshteinDistance(String x, String y) {
 
         int[][] dp = new int[x.length() + 1][y.length() + 1];
@@ -150,5 +151,3 @@ public class Database {
     }
 
 }
-
-// https://www.baeldung.com/java-levenshtein-distance

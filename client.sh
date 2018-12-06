@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+DIR="./out/production/Networks-Coursework/"
 
-echo "Compiling files"
+[[ ! -d ${DIR} ]] && mkdir -p ${DIR}
 
-javac src/Logger.java src/Client.java
-java src/Logger
+javac -cp ${DIR} -sourcepath ./src/ -d ${DIR} ./src/Client.java
+java -cp ${DIR} Client "127.0.0.1" 4444
