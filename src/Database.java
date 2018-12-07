@@ -10,7 +10,10 @@ public class Database {
 
     private Map<String, ArrayList<String>> songs = new HashMap<>();
 
-    public Database() {
+    /**
+     * Loads songs from disk and stores them in songs member variable
+     */
+    private void readFile() {
 
         try (BufferedReader br = new BufferedReader(new FileReader("./songs.txt"))) {
 
@@ -62,6 +65,18 @@ public class Database {
 
     }
 
+    public Database() {
+
+        this.readFile();
+
+    }
+
+    /**
+     * Return songs associated with a given artist. If none are found, check whether users have made a typo,
+     * and return a suggestion if so; if not, return a negative result
+     * @param artist
+     * @return
+     */
     public String getSongs(String artist) {
 
         for (String a : this.songs.keySet()) {
@@ -100,7 +115,7 @@ public class Database {
 
         for (String a : this.songs.keySet()) {
 
-            if (calculateLevenshteinDistance(a, artist) <= 2) {
+            if (calculateLevenshteinDistance(a, artist) <= 2 && Math.abs(a.length() - artist.length()) <= 2) {
 
                 return "Did you mean " + a + "?";
 
@@ -112,7 +127,12 @@ public class Database {
 
     }
 
-    // https://www.baeldung.com/java-levenshtein-distance
+    /**
+     * Calculates the Levernshtein distance of two strings: taken from https://www.baeldung.com/java-levenshtein-distance
+     * @param x
+     * @param y
+     * @return
+     */
     private int calculateLevenshteinDistance(String x, String y) {
 
         int[][] dp = new int[x.length() + 1][y.length() + 1];

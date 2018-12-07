@@ -32,9 +32,15 @@ public class Client {
 
     }
 
+    /**
+     * Constructor for the client class. Logic inside.
+     * @param hostname
+     * @param port
+     */
     public Client(String hostname, int port) {
 
-        System.out.println("Launching client...");
+        System.out.println("Client started");
+        this.logger.log("Client started");
 
         try (
 
@@ -45,7 +51,9 @@ public class Client {
 
         ) {
 
-            System.out.println("Connection successful");
+            System.out.println("Successfully connected to server on " + hostname + ":" + port);
+            this.logger.log("Successfully connected to server on " + hostname + ":" + port);
+
 
             String userInput, response;
 
@@ -61,37 +69,52 @@ public class Client {
 
                 }
 
-                long requestStart = System.currentTimeMillis();
+                if (!userInput.equals("")) {
 
-                out.println(userInput);
-                response = in.readLine();
+                    long requestStart = System.currentTimeMillis();
 
-                System.out.println("Response: " + response);
+                    out.println(userInput);
+                    response = in.readLine();
 
-                this.logger.log("Received response ("  + (System.currentTimeMillis() - requestStart) +
-                        " ms): " + "'" + response +  "' (" + response.getBytes().length + " bytes) " +
-                        "for request " + "'" + userInput + "'");
+                    System.out.println("Response: " + response);
+
+                    this.logger.log("Received response ("  + (System.currentTimeMillis() - requestStart) +
+                            " ms): " + "'" + response +  "' (" + response.getBytes().length + " bytes) " +
+                            "for request " + "'" + userInput + "'");
+
+                }
+
+                System.out.print("\nQuit? (Y/N): ");
+
+                userInput = stdIn.readLine();
+
+                if (userInput.toLowerCase().equals("y")) {
+
+                    break;
+
+                }
 
             }
 
         } catch (ConnectException e) {
 
             System.out.println("\nConnection to " + hostname + " refused");
-            System.exit(1);
+            this.logger.log("Connection to " + hostname + " refused");
 
         } catch (UnknownHostException e) {
 
             System.out.println("\nDon't know about host: " + hostname);
-            System.exit(1);
+            this.logger.log("Don't know about host: " + hostname);
 
         } catch (IOException e) {
 
             System.out.println("\nCouldn't get I/O for connection to " + hostname);
-            System.exit(1);
+            this.logger.log("Couldn't get I/O for connection to " + hostname);
 
         } finally {
 
             System.out.println("\nConnection closed"); // Though I don't explicitly check, the try-with-resources statement is guaranteed to close the connection itself.
+            this.logger.log("Connection closed");
             this.logger.toFile();
 
         }
@@ -99,7 +122,5 @@ public class Client {
     }
 
 }
-
-// TODO: improve error-handling; test cases
 
 // https://www.javaworld.com/article/2077322/core-java/core-java-sockets-programming-in-java-a-tutorial.html

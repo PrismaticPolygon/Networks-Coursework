@@ -17,6 +17,10 @@ public class Logger {
 
     }
 
+    /**
+     * Prepend the datetime to the string param and store it in the logs member variable
+     * @param string
+     */
     public void log(String string) {
 
         String datetime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
@@ -25,6 +29,9 @@ public class Logger {
 
     }
 
+    /**
+     * Write the log to disk, using the filename member variable
+     */
     public void toFile() {
 
         String directoryName = "./logs";

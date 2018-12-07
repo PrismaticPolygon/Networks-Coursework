@@ -33,6 +33,10 @@ public class Server {
 
     }
 
+    /**
+     * Constructor for the server class; logic inside
+     * @param port
+     */
     public Server(int port) {
 
         long connectionStart = -1;
